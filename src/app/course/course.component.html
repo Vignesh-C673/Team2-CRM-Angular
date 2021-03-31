@@ -1,0 +1,280 @@
+<div style="float: right;">
+    <a href="/admin" class="navbar-brand">Back</a>
+  </div>
+  <br>
+<div class="container">
+    <div>
+        <div class="form-row">
+            <div class="col">
+                <button class="btn btn-primary" (click)="open(content)">
+                    <i class="fa fa-user"></i> New Course
+
+                </button>
+            </div>
+
+            <div class="col">
+                <input class="form-control" type="text" autocomplete="off" name="search" [(ngModel)]="coursename"
+                    (ngModelChange)="search()" placeholder="Search Here Using Name...">
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="container">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Course Title</th>
+                <th>Description</th>
+                <th>Duration</th>
+                <th>Fees</th>
+                <th>Qualification</th>
+                <th>Modules</th>
+                <th>isActive</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr [class]="!c.active?'table-danger':''" *ngFor="let c of courseDetails | paginate:{ itemsPerPage:4,currentPage:page};let i=index">
+
+                <td>{{c.coursecode}}</td>
+                <td>{{c.coursename}}</td>
+                <td>{{c.description}}</td>
+                <td>{{c.duration}}</td>
+                <td>{{c.fees}}</td>
+                <td>
+                    <span *ngFor="let q of c.qualifications;let i=index;">{{q.qualname}}<span
+                            *ngIf="i<c.qualifications.length-1">,</span></span>
+                </td>
+                <td>
+                    <span *ngFor="let q of c.modules;let i=index">{{q.modname}}<span
+                            *ngIf="i<c.modules.length-1">,</span></span>
+                </td>
+                <td>{{c.active}}</td>
+                <td>
+                    <button class="btn btn-warning" (click)="openEdit(contentEdit,c)">
+                        <i class="fa fa-edit"></i>Edit
+                    </button>
+                    &nbsp;&nbsp;&nbsp;
+                    <span *ngIf="c.active==true">
+                        <button class="btn btn-danger" (click)="onDisable(c)">
+                            <i class="fa fa-remove"></i>Disable
+                        </button>
+                    </span>
+                    <span *ngIf="c.active==false">
+                        <button class="btn btn-success" (click)="onEnable(c)">
+                            <i class="fa fa-thumbs-up"></i>Enable
+                        </button>
+                    </span>
+
+
+                </td>
+                <!-- <div *ngIf="let c.coursename==null">Content to render when condition is true.</div> -->
+            </tr>
+            <tr *ngIf="!courseDetails?.length">
+                <td colspan="8">
+                    <div class="display-6 text-center">Sorry!! No Record Found</div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="border">
+        <pagination-controls (pageChange)="page=($event)"></pagination-controls>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">New Course</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="editForm" (ngSubmit)="onSubmit()" autocomplete=off>
+            <div class="form-group">
+                <label for="coursename">Course Title</label>
+                <div class="input-group">
+                    <input class="form-control" formControlName="coursename">
+                </div>
+            </div>
+            <div *ngIf="(isSubmitted || formControls.coursename.touched) && formControls.coursename.errors">
+                <div *ngIf="formControls.coursename.errors" class="text-danger">
+                    <span *ngIf="formControls.coursename.errors?.required"><sup>*</sup>Curse Title is required</span>
+                    <!-- <span *ngIf="formControls.coursename.errors?.pattern"><sup>*</sup>Description should contains only alphabets</span> -->
+                    <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                        characters</span> -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <div class="input-group">
+                    <input class="form-control" formControlName="description">
+                </div>
+                <div *ngIf="(isSubmitted || formControls.description.touched) && formControls.description.errors">
+                    <div *ngIf="formControls.description.errors" class="text-danger">
+                        <span *ngIf="formControls.description.errors?.required"><sup>*</sup>Description is
+                            required</span>
+                        <span *ngIf="formControls.description.errors?.pattern"><sup>*</sup>Description should contains
+                            only alphabets</span>
+                        <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                            characters</span> -->
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="duration">Duration</label>
+                <div class="input-group">
+                    <input class="form-control" min="0" max="3" formControlName="duration" placeholder="In days">
+                </div>
+            </div>
+            <div *ngIf="(isSubmitted || formControls.duration.touched) && formControls.duration.errors">
+                <div *ngIf="formControls.duration.errors" class="text-danger">
+                    <span *ngIf="formControls.duration.errors?.required"><sup>*</sup>Duration is required</span>
+                    <span *ngIf="formControls.duration.errors?.pattern"><sup>*</sup>Enter a valid Duration</span>
+                    <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                            characters</span> -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="fees">Fees</label>
+                <div class="input-group">
+                    <input class="form-control" min="0" max="6" formControlName="fees">
+                </div>
+                <div *ngIf="(isSubmitted || formControls.fees.touched) && formControls.fees.errors">
+                    <div *ngIf="formControls.fees.errors" class="text-danger">
+                        <span *ngIf="formControls.fees.errors?.required"><sup>*</sup>Fees is required</span>
+                        <span *ngIf="formControls.fees.errors?.pattern"><sup>*</sup>Enter a valid Fees</span>
+                        <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                            characters</span> -->
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" formArrayName="qualifications">
+                <label for="qualifications">Qualifications</label>
+                <span class="input-group" *ngFor="let qual of allQuals;let i=index">
+                    <input type="checkbox" [formControlName]="i">
+                    <label>{{qual.qualname}}</label>
+                </span>
+            </div>
+            <div *ngIf="(isSubmitted || formControls.qualifications.touched) && formControls.fees.errors">
+                <div *ngIf="formControls.qualifications.errors" class="text-danger">
+                    <span *ngIf="formControls.qualifications.errors?.required"><sup>*</sup>Description is
+                        required</span>
+                    <!-- <span *ngIf="formControls.description.errors?.pattern"><sup>*</sup>Description should contains only alphabets</span> -->
+                    <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                        characters</span> -->
+                </div>
+            </div>
+            <div class="form-group" formArrayName="modules">
+                <label for="modules">Modules</label>
+                <span class="input-group" *ngFor="let module of allModules;let i=index">
+                    <input type="checkbox" [formControlName]="i">
+                    <label>{{module.modname}}</label>
+                </span>
+            </div>
+            <div class="border text-center">
+                <button data-dismiss="modal" class="btn btn-info">Submit</button>
+            </div>
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+    </div>
+</ng-template>
+<ng-template #contentEdit let-modal>
+    <div class="model-header">
+        <h4 class="modal-title" id="modal-basic-title">Update Course</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="editForm" autocomplete=off>
+            <div class="form-group">
+                <label for="coursecode">CourseId</label>
+                <div class="input-group">
+                    <input class="form-control" formControlName="coursecode" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="coursename">Course Title</label>
+                <div class="input-group">
+                    <input class="form-control" formControlName="coursename">
+                </div>
+            </div>
+            <div *ngIf="(isSubmitted || formControls.coursename.touched) && formControls.coursename.errors">
+                <div *ngIf="formControls.coursename.errors" class="text-danger">
+                    <span *ngIf="formControls.coursename.errors?.required"><sup>*</sup>Curse Title is required</span>
+                    <!-- <span *ngIf="formControls.coursename.errors?.pattern"><sup>*</sup>Description should contains only alphabets</span> -->
+                    <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                        characters</span> -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <div class="input-group">
+                    <input class="form-control" formControlName="description">
+                </div>
+            </div>
+            <div *ngIf="(isSubmitted || formControls.description.touched) && formControls.description.errors">
+                <div *ngIf="formControls.description.errors" class="text-danger">
+                    <span *ngIf="formControls.description.errors?.required"><sup>*</sup>Description is required</span>
+                    <span *ngIf="formControls.description.errors?.pattern"><sup>*</sup>Description should contains only
+                        alphabets</span>
+                    <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                        characters</span> -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="duration">Duration</label>
+                <div class="input-group">
+                    <input class="form-control" formControlName="duration">
+                </div>
+            </div>
+            <div *ngIf="(isSubmitted || formControls.duration.touched) && formControls.duration.errors">
+                <div *ngIf="formControls.duration.errors" class="text-danger">
+                    <span *ngIf="formControls.duration.errors?.required"><sup>*</sup>Duration is required</span>
+                    <span *ngIf="formControls.duration.errors?.pattern"><sup>*</sup>Enter a valid Duration</span>
+                    <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                        characters</span> -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="fees">Fees</label>
+                <div class="input-group">
+                    <input class="form-control" formControlName="fees">
+                </div>
+            </div>
+            <div *ngIf="(isSubmitted || formControls.fees.touched) && formControls.fees.errors">
+                <div *ngIf="formControls.fees.errors" class="text-danger">
+                    <span *ngIf="formControls.fees.errors?.required"><sup>*</sup>Fees is required</span>
+                    <span *ngIf="formControls.fees.errors?.pattern"><sup>*</sup>Enter a valid Fees</span>
+                    <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                        characters</span> -->
+                </div>
+            </div>
+            <div class="form-group" formArrayName="qualifications">
+                <label for="qualifications">Qualifications</label>
+                <span class="input-group" *ngFor="let qual of allQuals;let i=index">
+                    <input type="checkbox" [formControlName]="i">
+                    <label>{{qual.qualname}}</label>
+                </span>
+            </div>
+            <div class="form-group" formArrayName="modules">
+                <label for="modules">Modules</label>
+                <span class="input-group" *ngFor="let module of allModules;let i=index">
+                    <input type="checkbox" [formControlName]="i">
+                    <label>{{module.modname}}</label>
+                </span>
+            </div>
+            <div class="border text-center">
+                <button data-dismiss="modal" class="btn btn-info" (click)="onUpdate()">Submit</button>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+    </div>
+</ng-template>

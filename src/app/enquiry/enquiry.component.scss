@@ -1,0 +1,17 @@
+.border-width{
+    width: 133%;
+}
+
+.line{
+    padding: 10px;
+    border: 1px solid grey;
+    margin : 10px;
+    display:flex;
+  }
+  .line input {
+    width: 500px;
+    border-radius: 21px;
+  }
+  .line button {
+    width:150px;
+  }

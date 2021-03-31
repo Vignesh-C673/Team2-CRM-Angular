@@ -1,0 +1,15 @@
+<div style="float: right;">
+  <a href="/manager" class="navbar-brand">Back</a>
+</div>
+<br>
+<br>
+<div class="chart-wrapper" style="width:800px;height:800px">
+    <canvas baseChart 
+    [data]="pieChartData" 
+    [labels]="pieChartLabels" 
+    [chartType]="pieChartType"
+    [options]="pieChartOptions"
+    [plugins]="pieChartPlugins"
+    [legend]="pieChartLegend">
+  </canvas>
+  </div>

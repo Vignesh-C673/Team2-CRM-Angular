@@ -1,0 +1,262 @@
+<div style="float: right;">
+  <a href="/admin" class="navbar-brand">Back</a>
+</div>
+<br>
+<br>
+<div class="border container">
+  <button class="btn btn-primary" (click)="open(content)">
+    <i class="fa fa-user"></i>New User
+
+  </button>
+</div>
+
+<table class="table table-bordered table-striped container">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Firstname</th>
+      <th>Lastname</th>
+      <th>Email</th>
+      <!-- <th>Mobile</th> -->
+      <th>Address</th>
+      <th>Active</th>
+      <th>Role</th>
+    </tr>
+
+  </thead>
+  <tbody>
+    <tr [class]="!user.active?'table-danger':''"
+      *ngFor="let user of users | paginate:{itemsPerPage: 4, currentPage:page}; let i=index">
+      <td>{{user.user_id}}</td>
+      <td>{{user.firstname}}</td>
+      <td>{{user.lastname}}</td>
+      <td>{{user.email}}</td>
+      <!-- <td>{{user.mobile}}</td> -->
+      <td>{{user.address}}</td>
+      <td>{{user.active}}</td>
+      <td>{{user.role.role_name}}</td>
+      <td>
+        <button class="btn btn-warning" (click)="openEdit(contentEdit,user)">
+          <i class="fa fa-edit"></i>Edit
+        </button>
+      </td>
+      <td>
+        <span *ngIf="user.active==true">
+          <button class="btn btn-danger" (click)="onDelete(user)">
+            <i class="fa fa-edit"></i>Disable
+          </button>
+        </span>
+
+
+        <span *ngIf="user.active==false">
+          <button class="btn btn-success" (click)="onEnable(user)">
+            <i class="fa fa-thumbs-up"></i>Enable
+          </button>
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div class="border container">
+  <pagination-controls (pageChange)="page=($event)"></pagination-controls>
+
+</div>
+
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">New User</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()" novalidate autocomplete=off>
+      <div class="form-group">
+        <label for="username">User Name</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="username">
+        </div>
+      </div>
+
+      <div *ngIf="(isSubmitted || formControls.username.touched) && formControls.username.errors">
+        <div *ngIf="formControls.username.errors" class="text-danger">
+          <span *ngIf="formControls.username.errors?.required"><sup>*</sup>Username is required</span>
+          <span *ngIf="formControls.username.errors?.pattern"><sup>*</sup>UserName contains only alphabets</span>
+          <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                    characters</span> -->
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="password">
+        </div>
+      </div>
+      <div *ngIf="(isSubmitted || formControls.password.touched) && formControls.password.errors">
+        <div *ngIf="formControls.password.errors" class="text-danger">
+          <span *ngIf="formControls.password.errors?.required"><sup>*</sup>Password is required</span>
+
+          <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                    characters</span> -->
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="firstname">First Name</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="firstname">
+        </div>
+      </div>
+
+      <div *ngIf="(isSubmitted || formControls.firstname.touched) && formControls.firstname.errors">
+        <div *ngIf="formControls.firstname.errors" class="text-danger">
+          <span *ngIf="formControls.firstname.errors?.required"><sup>*</sup>Firstname is required</span>
+          <span *ngIf="formControls.firstname.errors?.pattern"><sup>*</sup>FirstName contains only alphabets</span>
+          <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                    characters</span> -->
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="lastname">Last Name</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="lastname">
+        </div>
+      </div>
+
+      <div *ngIf="(isSubmitted || formControls.lastname.touched) && formControls.lastname.errors">
+        <div *ngIf="formControls.lastname.errors" class="text-danger">
+          <span *ngIf="formControls.lastname.errors?.required"><sup>*</sup>Lastname is required</span>
+          <span *ngIf="formControls.lastname.errors?.pattern"><sup>*</sup>LastName contains only alphabets</span>
+          <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                    characters</span> -->
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="address">
+        </div>
+      </div>
+
+      <div *ngIf="(isSubmitted || formControls.address.touched) && formControls.address.errors">
+        <div *ngIf="formControls.address.errors" class="text-danger">
+          <span *ngIf="formControls.address.errors?.required"><sup>*</sup>Address is required</span>
+
+          <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                    characters</span> -->
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="email">
+        </div>
+      </div>
+
+      <div *ngIf="(isSubmitted || formControls.email.touched) && formControls.email.errors">
+        <div *ngIf="formControls.email.errors" class="text-danger">
+          <span *ngIf="formControls.email.errors?.required"><sup>*</sup>Email is required</span>
+          <span *ngIf="formControls.email.errors?.pattern"><sup>*</sup>Enter a valid Email</span>
+          <!-- <span *ngIf="formControls.fees.errors?.minlength"><sup>*</sup>Name should have minimum 2
+                    characters</span> -->
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="role_id">Roles</label>
+        <div class="input-group">
+          <select formControlName="roleid">
+            <option *ngFor="let r of roles" [value]="r.role_id">{{r.role_name}}</option>
+          </select>
+
+        </div>
+      </div>
+      <!-- <div class="form-group">
+                        <label for="active">IsActivlabel>
+                        <div class="input-group">
+                          <input class="form-control" formControlName="active">
+                        </div>
+                      </div> -->
+      <div class="border text-center">
+        <button data-dismiss="modal" class="btn btn-info">Submit</button>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+  </div>
+
+</ng-template>
+<ng-template #contentEdit let-modal>
+  <div class="model-header">
+    <h4 class="modal-title" id="modal-basic-title">Update User</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editForm" autocomplete=off>
+      <div class="form-group">
+        <label for="user_id">User Id</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="user_id" readonly>
+        </div>
+      </div>
+      <!-- <div class="form-group">
+                          <label for="username">User Name</label>
+                          <div class="input-group">
+                            <input class="form-control" formControlName="username">
+                          </div>
+                        </div> -->
+      <!-- <div class="form-group">
+                          <label for="password">Password</label>
+                          <div class="input-group">
+                            <input class="form-control" formControlName="password">
+                          </div>
+                        </div> -->
+      <div class="form-group">
+        <label for="firstname">Full Name</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="firstname">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="lastname">Last Name</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="lastname">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="email">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="address">Address</label>
+        <div class="input-group">
+          <input class="form-control" formControlName="address">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="roleid">Roles</label>
+        <div class="input-group">
+          <select formControlName="roleid">
+            <option *ngFor="let r of roles" [value]="r.role_id">{{r.role_name}}</option>
+          </select>
+        </div>
+      </div>
+
+
+      <div class="border text-center">
+        <button data-dismiss="modal" class="btn btn-info" (click)="onUpdate()">Submit</button>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+  </div>
+</ng-template>
